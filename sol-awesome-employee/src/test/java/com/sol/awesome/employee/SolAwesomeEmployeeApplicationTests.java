@@ -94,7 +94,7 @@ public class SolAwesomeEmployeeApplicationTests {
 	}
 
 	public String toJson(Object o) throws JsonProcessingException {
-		return objectMapper.writeValueAsString(o);
+		return new ObjectMapper().writeValueAsString(o);
 	}
 
 }
