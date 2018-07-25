@@ -1,6 +1,14 @@
 package com.sol.awesome.employee.config;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.metamodel.ManagedType;
+import javax.persistence.metamodel.Metamodel;
+
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -10,13 +18,6 @@ import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapter;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
-
-import javax.persistence.Entity;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.metamodel.ManagedType;
-import javax.persistence.metamodel.Metamodel;
-import java.util.ArrayList;
-import java.util.List;
 
 
 //Needed this class for retrieving ids through REST

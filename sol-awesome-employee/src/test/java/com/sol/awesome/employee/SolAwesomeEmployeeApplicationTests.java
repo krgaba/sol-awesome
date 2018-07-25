@@ -1,9 +1,18 @@
 package com.sol.awesome.employee;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sol.awesome.employee.domain.Employee;
-import com.sol.awesome.employee.domain.Office;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,19 +26,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sol.awesome.employee.domain.Employee;
+import com.sol.awesome.employee.domain.Office;
 
 @RunWith(SpringRunner.class)
 
@@ -38,67 +38,63 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class SolAwesomeEmployeeApplicationTests {
 
-    @Autowired
-    ObjectMapper objectMapper;
-    @Autowired
-    private MockMvc mvc;
-    @Value("${employee_url:employees}")
-    private String employeePath;
+	@Autowired
+	ObjectMapper objectMapper;
+	@Autowired
+	private MockMvc mvc;
+	@Value("${employee_url:employees}")
+	private String employeePath;
 
-    @Test
-    public void contextLoads() {
-    }
+	@Test
+	public void contextLoads() {
+	}
 
-    @Test
-    public void createAndGetEmployee() throws Exception {
+	@Test
+	public void createAndGetEmployee() throws Exception {
 
-        createEmployee("Khuram", "Gaba");
-    }
+		createEmployee("Khuram", "Gaba");
+	}
 
-    @Test
-    public void createAndGetByIds() throws Exception {
+	@Test
+	public void createAndGetByIds() throws Exception {
 
-        // Set<Long> ids =
-        String ids = Arrays.asList(createEmployee("Khuram", "Gaba"), createEmployee("Alexander", "Bronshtein")).stream()
-                .map(e -> String.valueOf(e.getId())).collect(Collectors.joining(","));
+		String ids = Arrays.asList(createEmployee("Khuram", "Gaba"), createEmployee("Alexander", "Bronshtein")).stream()
+				.map(e -> String.valueOf(e.getId())).collect(Collectors.joining(","));
 
-        ResultActions ra = mvc.perform(get("/" + employeePath + "/search/findByIdIn").param("ids", ids).accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(200)).andExpect(jsonPath("$._embedded.employees", hasSize(2)))
-                .andExpect(jsonPath("$._embedded.employees[0].firstName", equalTo("Khuram")));
+		mvc.perform(get("/" + employeePath + "/search/findByIdIn").param("ids", ids).accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().is(200)).andExpect(jsonPath("$._embedded.employees", hasSize(2)))
+				.andExpect(jsonPath("$._embedded.employees[0].firstName", equalTo("Khuram")));
 
+	}
 
-    }
+	private Employee employeeTemplate(String firstname, String lastName) {
+		return new Employee(null, firstname, lastName, "12345", Office.Chicago, "Consultant", "kgaba@solstice.com",
+				"http://testurl.com");
+	}
 
-    private Employee employeeTemplate(String firstname, String lastName) {
-        return new Employee(null, firstname, lastName, "12345",
-                Office.Chicago, "Consultant", "kgaba@solstice.com", "http://testurl.com");
-    }
+	private Employee createEmployee(String firstname, String lastName) throws Exception {
+		Employee employee = employeeTemplate(firstname, lastName);
+		ResultActions ra = mvc.perform(post("/" + employeePath).content(toJson(employee))
+				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().is(201));
 
-    private Employee createEmployee(String firstname, String lastName) throws Exception {
-        Employee employee = employeeTemplate(firstname, lastName);
-        ResultActions ra = mvc.perform(post("/" + employeePath).content(toJson(employee)).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(201));
+		Employee savedEmployee = toDomainObject(ra, Employee.class);
+		assertNotNull(savedEmployee.getId());
+		assertNotNull(savedEmployee.getFirstName());
+		assertNotNull(savedEmployee.getEmail());
+		assertNotEquals(employee.getId(), savedEmployee.getId());
+		return savedEmployee;
+	}
 
-        Employee savedEmployee = toDomainObject(ra, Employee.class);
-        assertNotNull(savedEmployee.getId());
-        assertNotNull(savedEmployee.getFirstName());
-        assertNotNull(savedEmployee.getEmail());
-        assertNotEquals(employee.getId(), savedEmployee.getId());
-        return savedEmployee;
-    }
+	@SuppressWarnings("unchecked")
+	private <T> T toDomainObject(ResultActions resultActions, Class<T> domainClass) throws IOException {
+		MvcResult result = resultActions.andReturn();
+		String asString = result.getResponse().getContentAsString();
+		return String.class == domainClass ? (T) asString : objectMapper.readValue(asString, domainClass);
+	}
 
-
-    @SuppressWarnings("unchecked")
-    private <T> T toDomainObject(ResultActions resultActions, Class<T> domainClass) throws IOException {
-        MvcResult result = resultActions.andReturn();
-        String asString = result.getResponse().getContentAsString();
-        return String.class == domainClass ? (T) asString : objectMapper.readValue(asString, domainClass);
-    }
-
-
-    public String toJson(Object o) throws JsonProcessingException {
-        return objectMapper.writeValueAsString(o);
-    }
-
+	public String toJson(Object o) throws JsonProcessingException {
+		return objectMapper.writeValueAsString(o);
+	}
 
 }
