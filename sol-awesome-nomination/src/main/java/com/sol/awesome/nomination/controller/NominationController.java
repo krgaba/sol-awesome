@@ -41,7 +41,7 @@ public class NominationController {
 		return nominationService.getNominationsForEmployee(id, pageNumber, pageSize);
 	}
 	
-	@GetMapping(path="/employee/period/from{from}/to{to}")
+	@GetMapping(path="/period/from/{from}/to/{to}")
 	public @ResponseBody Page<Nomination> getForDateRange(@PathVariable("from") Date from, 
 			@PathVariable("to") Date to,
 			@RequestParam(defaultValue = "0") Integer pageNumber,

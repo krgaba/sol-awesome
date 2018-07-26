@@ -10,11 +10,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -29,6 +32,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +40,7 @@ import com.sol.awesome.nomination.client.AwesomeEmployeeClient;
 import com.sol.awesome.nomination.domain.AwesomeEmployee;
 import com.sol.awesome.nomination.domain.Nomination;
 import com.sol.awesome.nomination.domain.SolsticePrinciple;
+import com.sol.awesome.nomination.repositories.NominationRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -50,6 +55,14 @@ public class SolAwesomeNominationApplicationTests {
 	private String nominationPath = "/nominations";
 	@MockBean
 	AwesomeEmployeeClient awesomeEmployeeClient;
+	@Autowired
+	NominationRepository repository;
+
+	@After
+	@Transactional
+	public void tearDown() {
+		repository.deleteAll();
+	}
 
 	@Test
 	public void contextLoads() {
@@ -74,19 +87,41 @@ public class SolAwesomeNominationApplicationTests {
 				.andExpect(jsonPath("$.content[0].employee.firstName", equalTo("Khurum")));
 
 	}
-	
+
 	@Test
 	public void testGetNominationsByDateRange() throws Exception {
 		Nomination nomination1 = nominationTemplate();
-		nomination1.getEmployee().setId(133L);
+		nomination1.getEmployee().setId(153L);
 		Nomination nomination2 = nominationTemplate();
-		nomination2.getEmployee().setId(134L);
+		nomination2.getEmployee().setId(154L);
 		createNominationOk(nomination1);
 		createNominationOk(nomination2);
 
-		mvc.perform(get(nominationPath + "/employee/" + 133).accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().is(200)).andExpect(jsonPath("$.content", hasSize(1)))
+		String fromDateStr = LocalDateTime.now().plusDays(-1).format(DateTimeFormatter.ISO_LOCAL_DATE);
+		String toDateStr = LocalDateTime.now().plusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE);
+
+		mvc.perform(get(nominationPath + "/period/from/" + fromDateStr + "/to/" + toDateStr)
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(200))
+				.andExpect(jsonPath("$.content", hasSize(2)))
 				.andExpect(jsonPath("$.content[0].employee.firstName", equalTo("Khurum")));
+
+	}
+
+	@Test
+	public void testGetNominationsByOutOfDateRange() throws Exception {
+		Nomination nomination1 = nominationTemplate();
+		nomination1.getEmployee().setId(153L);
+		Nomination nomination2 = nominationTemplate();
+		nomination2.getEmployee().setId(154L);
+		createNominationOk(nomination1);
+		createNominationOk(nomination2);
+
+		String fromDateStr = LocalDateTime.now().plusDays(-3).format(DateTimeFormatter.ISO_LOCAL_DATE);
+		String toDateStr = LocalDateTime.now().plusDays(-2).format(DateTimeFormatter.ISO_LOCAL_DATE);
+
+		mvc.perform(get(nominationPath + "/period/from/" + fromDateStr + "/to/" + toDateStr)
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(200))
+				.andExpect(jsonPath("$.content", hasSize(0)));
 
 	}
 
