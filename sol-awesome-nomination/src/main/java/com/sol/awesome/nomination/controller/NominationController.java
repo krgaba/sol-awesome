@@ -1,5 +1,7 @@
 package com.sol.awesome.nomination.controller;
 
+import java.sql.Date;
+
 import javax.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -37,6 +39,14 @@ public class NominationController {
 			@RequestParam(defaultValue = "0") Integer pageNumber,
 			@RequestParam(defaultValue = "30") Integer pageSize ) {
 		return nominationService.getNominationsForEmployee(id, pageNumber, pageSize);
+	}
+	
+	@GetMapping(path="/employee/period/from{from}/to{to}")
+	public @ResponseBody Page<Nomination> getForDateRange(@PathVariable("from") Date from, 
+			@PathVariable("to") Date to,
+			@RequestParam(defaultValue = "0") Integer pageNumber,
+			@RequestParam(defaultValue = "30") Integer pageSize ) {
+		return nominationService.getForDateRange(from, to , pageNumber, pageSize);
 	}
 
 }

@@ -74,6 +74,21 @@ public class SolAwesomeNominationApplicationTests {
 				.andExpect(jsonPath("$.content[0].employee.firstName", equalTo("Khurum")));
 
 	}
+	
+	@Test
+	public void testGetNominationsByDateRange() throws Exception {
+		Nomination nomination1 = nominationTemplate();
+		nomination1.getEmployee().setId(133L);
+		Nomination nomination2 = nominationTemplate();
+		nomination2.getEmployee().setId(134L);
+		createNominationOk(nomination1);
+		createNominationOk(nomination2);
+
+		mvc.perform(get(nominationPath + "/employee/" + 133).accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().is(200)).andExpect(jsonPath("$.content", hasSize(1)))
+				.andExpect(jsonPath("$.content[0].employee.firstName", equalTo("Khurum")));
+
+	}
 
 	@SuppressWarnings("unchecked")
 	private <T> T toDomainObject(ResultActions resultActions, Class<T> domainClass) throws IOException {
