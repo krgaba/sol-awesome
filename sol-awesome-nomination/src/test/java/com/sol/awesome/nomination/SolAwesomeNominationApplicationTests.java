@@ -1,18 +1,24 @@
 package com.sol.awesome.nomination;
 
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -22,6 +28,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sol.awesome.nomination.client.AwesomeEmployeeClient;
 import com.sol.awesome.nomination.domain.AwesomeEmployee;
 import com.sol.awesome.nomination.domain.Nomination;
 import com.sol.awesome.nomination.domain.SolsticePrinciple;
@@ -37,6 +44,8 @@ public class SolAwesomeNominationApplicationTests {
 	@Autowired
 	private MockMvc mvc;
 	private String nominationPath = "/nominations";
+	@MockBean
+	AwesomeEmployeeClient awesomeEmployeeClient;
 
 	@Test
 	public void contextLoads() {
@@ -44,7 +53,7 @@ public class SolAwesomeNominationApplicationTests {
 
 	@Test
 	public void testCreate() throws Exception {
-		createNomination();
+		createNominationOk();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -58,19 +67,27 @@ public class SolAwesomeNominationApplicationTests {
 		return objectMapper.writeValueAsString(o);
 	}
 
-	private Nomination createNomination() throws Exception {
-		Nomination nomination = nominationTemplate();
+	private Nomination createNominationOk() throws Exception {
+		return createNominationOk(nominationTemplate());
+	}
+	
+	private Nomination createNominationOk(Nomination nomination) throws Exception {
+		List<AwesomeEmployee> employees = Arrays.asList(nomination.getEmployee(), 
+				nomination.getNominatedBy());
+		Set<Long> ids = employees.stream().map(AwesomeEmployee::getId)
+				.collect(Collectors.toSet());
+		Mockito.when(awesomeEmployeeClient.getEmployees(ids)).thenReturn(new Resources<>(employees));
 		ResultActions ra = mvc
 				.perform(post(nominationPath).content(toJson(nomination)).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().is(201));
 
 		Nomination savedNomination = toDomainObject(ra, Nomination.class);
 		assertNotNull(savedNomination.getId());
-		// assertNotNull(savedNomination.getFirstName());
-		// assertNotNull(savedNomination.getEmail());
-		// assertNotEquals(nomination.getId(), savedNomination.getId());
+		assertNotEquals(nomination.getId(), savedNomination.getId());
 		return savedNomination;
 	}
+	
+	
 
 	private Nomination nominationTemplate() {
 		Nomination nomination = new Nomination();

@@ -1,5 +1,7 @@
 package com.sol.awesome.nomination.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +22,7 @@ public class NominationController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public @ResponseBody Nomination create(@RequestBody Nomination request) {
+	public @ResponseBody Nomination create(@RequestBody @Valid Nomination request) {
 		return nominationService.create(request);
 	}
 
