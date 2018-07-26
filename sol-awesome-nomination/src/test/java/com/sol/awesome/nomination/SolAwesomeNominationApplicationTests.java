@@ -1,8 +1,12 @@
 package com.sol.awesome.nomination;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.IOException;
@@ -56,6 +60,21 @@ public class SolAwesomeNominationApplicationTests {
 		createNominationOk();
 	}
 
+	@Test
+	public void testGetSingleNominationByEmployee() throws Exception {
+		Nomination nomination1 = nominationTemplate();
+		nomination1.getEmployee().setId(133L);
+		Nomination nomination2 = nominationTemplate();
+		nomination2.getEmployee().setId(134L);
+		createNominationOk(nomination1);
+		createNominationOk(nomination2);
+
+		mvc.perform(get(nominationPath + "/employee/" + 133).accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().is(200)).andExpect(jsonPath("$.content", hasSize(1)))
+				.andExpect(jsonPath("$.content[0].employee.firstName", equalTo("Khurum")));
+
+	}
+
 	@SuppressWarnings("unchecked")
 	private <T> T toDomainObject(ResultActions resultActions, Class<T> domainClass) throws IOException {
 		MvcResult result = resultActions.andReturn();
@@ -70,12 +89,10 @@ public class SolAwesomeNominationApplicationTests {
 	private Nomination createNominationOk() throws Exception {
 		return createNominationOk(nominationTemplate());
 	}
-	
+
 	private Nomination createNominationOk(Nomination nomination) throws Exception {
-		List<AwesomeEmployee> employees = Arrays.asList(nomination.getEmployee(), 
-				nomination.getNominatedBy());
-		Set<Long> ids = employees.stream().map(AwesomeEmployee::getId)
-				.collect(Collectors.toSet());
+		List<AwesomeEmployee> employees = Arrays.asList(nomination.getEmployee(), nomination.getNominatedBy());
+		Set<Long> ids = employees.stream().map(AwesomeEmployee::getId).collect(Collectors.toSet());
 		Mockito.when(awesomeEmployeeClient.getEmployees(ids)).thenReturn(new Resources<>(employees));
 		ResultActions ra = mvc
 				.perform(post(nominationPath).content(toJson(nomination)).contentType(MediaType.APPLICATION_JSON))
@@ -86,21 +103,23 @@ public class SolAwesomeNominationApplicationTests {
 		assertNotEquals(nomination.getId(), savedNomination.getId());
 		return savedNomination;
 	}
-	
-	
 
 	private Nomination nominationTemplate() {
 		Nomination nomination = new Nomination();
-		AwesomeEmployee employee = new AwesomeEmployee() {{
-			setId(120L);
-			setFirstName("Khurum");
-			setLastName("Gaba");
-		}};
-		AwesomeEmployee nominatedBy = new AwesomeEmployee() {{
-			setId(140L);
-			setFirstName("Alexander");
-			setLastName("Bronshtein");
-		}};
+		AwesomeEmployee employee = new AwesomeEmployee() {
+			{
+				setId(120L);
+				setFirstName("Khurum");
+				setLastName("Gaba");
+			}
+		};
+		AwesomeEmployee nominatedBy = new AwesomeEmployee() {
+			{
+				setId(140L);
+				setFirstName("Alexander");
+				setLastName("Bronshtein");
+			}
+		};
 		nomination.setEmployee(employee);
 		nomination.setNominatedBy(nominatedBy);
 		nomination.setPrincipleGroup(

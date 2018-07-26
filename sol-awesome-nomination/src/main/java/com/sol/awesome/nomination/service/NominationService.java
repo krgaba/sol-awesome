@@ -6,6 +6,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +56,13 @@ public class NominationService {
 		Collection<AwesomeEmployee> employees = awesomeEmployeeClient.getEmployees(ids).getContent();
 		// TODO: validate size, throw exception if absent
 		return employees;
+
+	}
+
+
+	public Page<Nomination> getNominationsForEmployee(Long id, Integer pageNumber, Integer pageSize) {
+		
+		return this.nominationRepository.findByEmployeeId(id, PageRequest.of(pageNumber, pageSize));
 
 	}
 
