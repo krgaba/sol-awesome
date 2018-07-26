@@ -10,10 +10,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.WeekFields;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -122,6 +125,39 @@ public class SolAwesomeNominationApplicationTests {
 		mvc.perform(get(nominationPath + "/period/from/" + fromDateStr + "/to/" + toDateStr)
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(200))
 				.andExpect(jsonPath("$.content", hasSize(0)));
+
+	}
+
+	@Test
+	public void testGetNominationsByWeekAbsentWeekNum() throws Exception {
+		Nomination nomination1 = nominationTemplate();
+		nomination1.getEmployee().setId(153L);
+		Nomination nomination2 = nominationTemplate();
+		nomination2.getEmployee().setId(154L);
+		createNominationOk(nomination1);
+		createNominationOk(nomination2);
+
+		mvc.perform(get(nominationPath + "/period/week/").accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().is(200)).andExpect(jsonPath("$.content", hasSize(2)))
+				.andExpect(jsonPath("$.content[0].employee.firstName", equalTo("Khurum")));
+
+	}
+
+	@Test
+	public void testGetNominationsByWeekWithNum() throws Exception {
+		Nomination nomination1 = nominationTemplate();
+		nomination1.getEmployee().setId(153L);
+		Nomination nomination2 = nominationTemplate();
+		nomination2.getEmployee().setId(154L);
+		createNominationOk(nomination1);
+		createNominationOk(nomination2);
+
+		int currentWeekNum = LocalDate.now().get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+
+		mvc.perform(get(nominationPath + "/period/week/").param("weekNum", String.valueOf(currentWeekNum))
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(200))
+				.andExpect(jsonPath("$.content", hasSize(2)))
+				.andExpect(jsonPath("$.content[0].employee.firstName", equalTo("Khurum")));
 
 	}
 

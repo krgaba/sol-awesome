@@ -1,7 +1,15 @@
 package com.sol.awesome.nomination.service;
 
 import java.sql.Date;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.IsoFields;
+import java.time.temporal.TemporalAdjusters;
+import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,6 +28,7 @@ import com.sol.awesome.nomination.repositories.NominationRepository;
 @Service
 @Transactional
 public class NominationService {
+	private static final int WEEK_NUM_MAX = 53;
 	private final NominationRepository nominationRepository;
 	private final AwesomeEmployeeClient awesomeEmployeeClient;
 
@@ -59,16 +68,33 @@ public class NominationService {
 
 	}
 
-
 	public Page<Nomination> getNominationsForEmployee(Long id, Integer pageNumber, Integer pageSize) {
-		
+
 		return nominationRepository.findByEmployeeId(id, PageRequest.of(pageNumber, pageSize));
 
 	}
 
 	public Page<Nomination> getForDateRange(Date from, Date to, Integer pageNumber, Integer pageSize) {
 		return nominationRepository.findByDateBetween(from, to, PageRequest.of(pageNumber, pageSize));
+
+	}
+
+	public Page<Nomination> getForWeek(Integer weekNum, Integer pageNumber, Integer pageSize) {
+		Map.Entry<Date, Date> datePair = fromWeek(weekNum);
+		return getForDateRange(datePair.getKey(), datePair.getValue(), pageNumber, pageSize);
+	}
+
+	private Entry<Date, Date> fromWeek(Integer weekNum) {
+		LocalDate now = LocalDate.now();
 		
+		if ((weekNum != null) && (weekNum > 0) && (weekNum < WEEK_NUM_MAX)) {
+			now = now
+		            .with(IsoFields.WEEK_OF_WEEK_BASED_YEAR, weekNum);
+		} 
+		
+		LocalDate from = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+		LocalDate to = now.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+		return new AbstractMap.SimpleImmutableEntry<>(Date.valueOf(from), Date.valueOf(to));
 	}
 
 }

@@ -48,5 +48,14 @@ public class NominationController {
 			@RequestParam(defaultValue = "30") Integer pageSize ) {
 		return nominationService.getForDateRange(from, to , pageNumber, pageSize);
 	}
+	
+
+	
+	@GetMapping(path="/period/week")
+	public @ResponseBody Page<Nomination> getForWeek(@RequestParam(required = false) Integer weekNum, 
+			@RequestParam(defaultValue = "0") Integer pageNumber,
+			@RequestParam(defaultValue = "30") Integer pageSize ) {
+		return nominationService.getForWeek(weekNum , pageNumber, pageSize);
+	}
 
 }
