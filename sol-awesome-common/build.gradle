@@ -41,7 +41,8 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-web:' + springBootVersion)
     compile('org.springframework.cloud:spring-cloud-starter-sleuth')
     compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
-	
+	compile('org.springframework.cloud:spring-cloud-starter-feign:1.4.5.RELEASE')   
+   
     compile('org.springframework.boot:spring-boot-starter-actuator:' + springBootVersion)
     compile('org.mariadb.jdbc:mariadb-java-client:'+ mariaDbVersion)
     compile('io.springfox:springfox-data-rest:' + springfoxSwaggerVersion)
