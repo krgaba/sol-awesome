@@ -21,7 +21,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
 
     @ApiOperation("Find employees by set of ids")
-    @ApiResponses({@ApiResponse(code=200, message="Success", response=List.class)})
+    @ApiResponses({@ApiResponse(code=200, message="Success")})
     List<Employee> findByIdIn(@Param("ids") @ApiParam(value="Employee IDs", required = true) Set<Long> ids);
 
 }
