@@ -1,7 +1,8 @@
 rootProject.name = 'sol-awesome'
 
-
+include ':sol-awesome-common'
 include ':sol-awesome-employee'
+include ':sol-awesome-nomination'
 
 
 

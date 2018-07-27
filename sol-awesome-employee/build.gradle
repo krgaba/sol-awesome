@@ -1,9 +1,6 @@
+
 buildscript {
-    ext {
-        springBootVersion = '2.0.3.RELEASE'
-        mariaDbVersion='1.5.9'
-        springfoxSwaggerVersion='2.7.0'
-    }
+
     repositories {
         mavenCentral()
     }
@@ -19,33 +16,18 @@ apply plugin: 'io.spring.dependency-management'
 
 group = 'com.sol.awesome'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    maven { url "http://repo.spring.io/release"}
 }
 
-
-ext {
-    springCloudVersion = 'Finchley.RELEASE'
-}
 
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-data-jpa')
-    compile('org.springframework.boot:spring-boot-starter-data-rest')
-    compile('org.springframework.boot:spring-boot-starter-web')
-    compile('org.springframework.cloud:spring-cloud-starter-sleuth')
-    compile('org.springframework.boot:spring-boot-starter-actuator')
-    compile('org.mariadb.jdbc:mariadb-java-client:'+ mariaDbVersion)
-    compile('io.springfox:springfox-data-rest:2.8.0')
-    compile('io.springfox:springfox-swagger2:2.8.0')
-    compile('io.springfox:springfox-swagger-ui:2.8.0')
-    compile('org.hsqldb:hsqldb:2.3.2')
-    compileOnly('org.projectlombok:lombok')
-    testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
-}
-
+ 	compile(project(":sol-awesome-common")) {
+	}
+ }
+ 
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"

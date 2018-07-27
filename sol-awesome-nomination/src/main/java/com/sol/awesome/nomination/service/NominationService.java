@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,10 @@ public class NominationService {
 				.build().collect(Collectors.toSet());
 
 		Collection<AwesomeEmployee> employees = awesomeEmployeeClient.getEmployees(ids).getContent();
-		// TODO: validate size, throw exception if absent
+		
+		if (CollectionUtils.isEmpty(employees)) {
+			throw new IllegalArgumentException("Could not find employee from " + request);
+		}
 		return employees;
 
 	}

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-//import org.apache.commons.lang3.StringUtils;
+//import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -99,9 +99,8 @@ public class LogUtil {
 	}
 
 	public static void setAppLogLevel(String appLogLevel) {
-		//FIXME
 		if (//StringUtils.isNotBlank(appLogLevel)
-				appLogLevel != null	) {
+				appLogLevel != null) {
 			setAppLogLevel(Level.valueOf(appLogLevel));
 		}
 	}

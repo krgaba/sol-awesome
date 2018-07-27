@@ -1,14 +1,19 @@
 buildscript {
-	ext {
-		springBootVersion = '2.0.3.RELEASE'
-		mariaDbVersion='1.5.9'
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
+    ext {
+        springBootVersion = '2.0.3.RELEASE'
+        mariaDbVersion = '1.5.9'
+        springfoxSwaggerVersion = '2.8.0'
+        lombockVersion = '1.18.0'
+        hsqldbVersion = '2.4.1'
+        commonsVersion = '3.2.2'
+        commonsLangVersion = '3.0'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
 }
 
 apply plugin: 'java'
@@ -21,38 +26,38 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
-	mavenCentral()
+    mavenCentral()
+    maven { url "http://repo.spring.io/release"}
 }
 
 
 ext {
-	springCloudVersion = 'Finchley.RELEASE'
+    springCloudVersion = 'Finchley.RELEASE'
 }
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile('org.springframework.boot:spring-boot-starter-data-rest')
-	compile('org.springframework.boot:spring-boot-starter-web')
-	compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
-	compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-server')
-	compile('org.springframework.cloud:spring-cloud-starter-sleuth')
-    compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa:' + springBootVersion)
+    compile('org.springframework.boot:spring-boot-starter-data-rest:' + springBootVersion)
+    compile('org.springframework.boot:spring-boot-starter-web:' + springBootVersion)
+    compile('org.springframework.cloud:spring-cloud-starter-sleuth')
+    compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
+	
+    compile('org.springframework.boot:spring-boot-starter-actuator:' + springBootVersion)
     compile('org.mariadb.jdbc:mariadb-java-client:'+ mariaDbVersion)
-    compile('io.springfox:springfox-data-rest:2.8.0')
-    compile('io.springfox:springfox-swagger2:2.8.0')
-    compile('io.springfox:springfox-swagger-ui:2.8.0')
-    compileOnly('org.projectlombok:lombok')
-    testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
-	compile('org.hsqldb:hsqldb')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
-	
-	
-	
+    compile('io.springfox:springfox-data-rest:' + springfoxSwaggerVersion)
+    compile('io.springfox:springfox-swagger2:' + springfoxSwaggerVersion)
+    compile('io.springfox:springfox-swagger-ui:' + springfoxSwaggerVersion)
+    compile('org.hsqldb:hsqldb:' + hsqldbVersion)
+    compile('org.projectlombok:lombok:' + lombockVersion)   
+    compile("commons-collections:commons-collections:" + commonsVersion)
+    compile('org.apache.commons:commons-lang3:' + commonsLangVersion)
+    
+    compile('org.springframework.boot:spring-boot-starter-test:' + springBootVersion)
+    compile('org.springframework.restdocs:spring-restdocs-mockmvc:' + '2.0.2.RELEASE')
 }
 
 dependencyManagement {
-	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-	}
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }

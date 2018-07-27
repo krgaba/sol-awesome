@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.sol.awesome.nomination.domain.AwesomeEmployee;
 
-@FeignClient(name = "employee", url = "http://localhost:8080/employees")
+@FeignClient("sol-awesome-employee"/*, url = "http://localhost:8095/employees"*/)
 public interface AwesomeEmployeeClient {
 	
-	@GetMapping(path = "/search/findByIdIn")
+	@GetMapping(path = "/employees/search/findByIdIn")
 	Resources<AwesomeEmployee> getEmployees(@RequestParam("ids") Set<Long> ids);
 
 }
