@@ -11,8 +11,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +27,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sol.awesome.employee.domain.Employee;
 import com.sol.awesome.employee.domain.Office;
+import com.sol.awesome.employee.repositories.EmployeeRepository;
 
 @RunWith(SpringRunner.class)
 
@@ -44,6 +48,17 @@ public class SolAwesomeEmployeeApplicationTests {
 	private MockMvc mvc;
 	@Value("${employee_url:employees}")
 	private String employeePath;
+	private AtomicInteger employeeNumber = new AtomicInteger(12345);
+	
+	@Autowired
+	EmployeeRepository repository;
+	
+	@After
+	@Transactional
+	public void tearDown() {
+		
+		repository.deleteAll();
+	}
 
 	@Test
 	public void contextLoads() {
@@ -68,7 +83,7 @@ public class SolAwesomeEmployeeApplicationTests {
 	}
 
 	private Employee employeeTemplate(String firstname, String lastName) {
-		return new Employee(null, firstname, lastName, "12345", Office.Chicago, "Consultant", "kgaba@solstice.com",
+		return new Employee(null, firstname, lastName, String.valueOf(employeeNumber.incrementAndGet()), Office.Chicago, "Consultant", "kgaba@solstice.com",
 				"http://testurl.com");
 	}
 
