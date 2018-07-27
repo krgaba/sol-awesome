@@ -18,7 +18,7 @@
 		</logger>
 	</springProfile>
 
-	<springProfile name="local, build, default">
+	<springProfile name="local,dev build, default">
 		<logger name="com.sol" level="${logging.level:-INFO}"
 			additivity="false">
 			<appender-ref ref="CONSOLE" />
