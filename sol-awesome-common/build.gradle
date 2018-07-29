@@ -39,10 +39,17 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa:' + springBootVersion)
     compile('org.springframework.boot:spring-boot-starter-data-rest:' + springBootVersion)
     compile('org.springframework.boot:spring-boot-starter-web:' + springBootVersion)
-    compile('org.springframework.cloud:spring-cloud-starter-sleuth')
-    compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
-	compile('org.springframework.cloud:spring-cloud-starter-feign:1.4.5.RELEASE')   
-   
+    compile('org.springframework.boot:spring-boot-starter-aop:' + springBootVersion)
+	compile('org.springframework.cloud:spring-cloud-starter-sleuth')
+    compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client') {
+    	//exclude group: 'com.google.code.gson', module: 'gson'
+    }
+	compile('org.springframework.cloud:spring-cloud-starter-feign:1.4.5.RELEASE') 
+	compile('io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry') {
+     	exclude group: 'org.springframework.security', module: 'spring-security-config'
+      	//exclude group: 'com.google.code.gson', module: 'gson'
+  	} 
+   	
     compile('org.springframework.boot:spring-boot-starter-actuator:' + springBootVersion)
     compile('org.mariadb.jdbc:mariadb-java-client:'+ mariaDbVersion)
     compile('io.springfox:springfox-data-rest:' + springfoxSwaggerVersion)

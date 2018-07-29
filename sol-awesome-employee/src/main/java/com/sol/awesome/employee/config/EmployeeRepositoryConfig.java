@@ -31,15 +31,13 @@ public class EmployeeRepositoryConfig extends RepositoryRestMvcConfiguration {
 
     @Bean
     public RepositoryRestConfigurer repositoryRestConfigurer(EntityManagerFactory entityManagerFactory) {
-        List<Class<?>> entityClasses = getAllManagedEntityTypes(entityManagerFactory);
+        final List<Class<?>> entityClasses = getAllManagedEntityTypes(entityManagerFactory);
 
         return new RepositoryRestConfigurerAdapter() {
 
             @Override
             public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
-                for (Class<?> entityClass : entityClasses) {
-                    config.exposeIdsFor(entityClass);
-                }
+            	entityClasses.forEach(e-> config.exposeIdsFor(e));
             }
         };
     }
