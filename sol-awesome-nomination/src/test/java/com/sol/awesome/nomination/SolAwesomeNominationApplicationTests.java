@@ -211,7 +211,7 @@ public class SolAwesomeNominationApplicationTests {
 		nomination.setNominatedBy(nominatedBy);
 		nomination.setPrincipleGroup(
 				Arrays.stream(SolsticePrinciple.values()).map(p -> p.name()).collect(Collectors.joining(",")));
-		nomination.setDescription("We are tired today");
+		nomination.setDescription("Make A Difference");
 
 		return nomination;
 	}
