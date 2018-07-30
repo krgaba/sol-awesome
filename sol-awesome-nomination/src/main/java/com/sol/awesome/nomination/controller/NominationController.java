@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sol.awesome.nomination.domain.Nomination;
 import com.sol.awesome.nomination.service.NominationService;
+import com.sol.awesome.util.LogInfo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,6 +29,7 @@ import io.swagger.annotations.ApiResponses;
 @Api(tags = "Nomination")
 @RestController
 @RequestMapping("/nominations")
+@LogInfo
 public class NominationController {
 	private final NominationService nominationService;
 
