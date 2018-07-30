@@ -6,7 +6,9 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "name", scope = SolsticePrinciple.class)
 public enum SolsticePrinciple {
-	WorkHard("Encourages working"), SleepLess("Promotes efficiency");
+	ServantLeadership("Servant Leadership"), PracticeEmpathy("Practice Empathy"),
+	EmpowerDisruption("Empower Disruption"), CatchExcellence("Catch Excellence"),
+	MakeADifference("Make A difference");
 	
 	
 	private String description;
