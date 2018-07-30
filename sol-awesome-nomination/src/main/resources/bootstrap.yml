@@ -1,5 +1,15 @@
 spring:
+  profiles:
+    active: local
   application:
     name: sol-awesome-nomination
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
+    
+logging:
+  level:
+    com:
+      sun:
+        proxy: INFO
+      sol:
+        awesome:
+          filter:
+            SimpleCORSFilter: INFO

@@ -19,7 +19,7 @@
 	</springProfile>
 
 	<springProfile name="local,dev,build">
-		<logger name="com.sol" level="${logging.level:-INFO}"
+		<logger name="com.sol" level="${logging.level:-DEBUG}"
 			additivity="false">
 			<appender-ref ref="CONSOLE" />
 		</logger>
