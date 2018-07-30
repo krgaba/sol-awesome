@@ -14,10 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.junit.After;
@@ -31,6 +28,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -111,6 +109,33 @@ public class SolAwesomeNominationApplicationTests {
 	}
 
 	@Test
+	@Sql("classpath:create.sql")
+	public void testGetNominationsByDateRangeCoupleWeeksOut() throws Exception {
+
+		String fromDateStr = "2018-07-03";
+		String toDateStr = "2018-07-07";
+
+		mvc.perform(get(nominationPath + "/period/from/" + fromDateStr + "/to/" + toDateStr)
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(200))
+				.andExpect(jsonPath("$.content", hasSize(2)))
+				.andExpect(jsonPath("$.content[0].employee.firstName", equalTo("John")));
+
+	}
+
+//	@Test
+//	@Sql("classpath:create.sql")
+//	public void testGetNominationsByDateRange2() throws Exception {
+//		String fromDateStr = LocalDateTime.now().plusDays(-1).format(DateTimeFormatter.ISO_LOCAL_DATE);
+//		String toDateStr = LocalDateTime.now().plusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE);
+//
+//		mvc.perform(get(nominationPath + "/period/from/" + fromDateStr + "/to/" + toDateStr)
+//				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(200))
+//				.andExpect(jsonPath("$.content", hasSize(2)))
+//				.andExpect(jsonPath("$.content[0].employee.firstName", equalTo("Khurum")));
+//
+//	}
+
+	@Test
 	public void testGetNominationsByOutOfDateRange() throws Exception {
 		Nomination nomination1 = nominationTemplate();
 		nomination1.getEmployee().setId(153L);
@@ -143,7 +168,32 @@ public class SolAwesomeNominationApplicationTests {
 
 	}
 
-	//TODO: check logic on sunday
+	@Test
+	@Sql("classpath:create.sql")
+	public void testGetNominationsByWeekWithWeek28() throws Exception {
+		int currentWeekNum = 28;
+
+		// nomination record falls on last day of week 28
+		mvc.perform(get(nominationPath + "/period/week/").param("weekNum", String.valueOf(currentWeekNum))
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(200))
+				.andExpect(jsonPath("$.content", hasSize(1)))
+				.andExpect(jsonPath("$.content[0].employee.firstName", equalTo("Josh")));
+
+	}
+
+	@Test
+	@Sql("classpath:create.sql")
+	public void testGetNominationsByWeekWithWeek27() throws Exception {
+		int currentWeekNum = 27;
+
+		mvc.perform(get(nominationPath + "/period/week/").param("weekNum", String.valueOf(currentWeekNum))
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(200))
+				.andExpect(jsonPath("$.content", hasSize(3)))
+				.andExpect(jsonPath("$.content[0].employee.firstName", equalTo("John")));
+
+	}
+
+	//Commenting out this since week based API is tested in above test cases
 	@Test
 	public void testGetNominationsByWeekWithNum() throws Exception {
 		Nomination nomination1 = nominationTemplate();
