@@ -158,7 +158,7 @@ public class LogUtil {
 	private @Value("${yaolog.method.duration.log: true}") boolean logMethodDuration = true;
 	private @Value("${yaolog.collection.log.limit: 10}") int COLLECTION_LOG_LIMIT = 10;
 	private @Value("${yaolog.method.controller.info: true}") boolean infoController = true;
-	private @Value("${CLOUD_ENVIRONMENT:UNSET}") String cloudEnv;
+	private @Value("${profile:local}") String cloudEnv;
 
 	@PostConstruct
 	public void initAspects() {

@@ -72,12 +72,12 @@ public class NominationService {
 
 	public Page<Nomination> getNominationsForEmployee(Long id, Integer pageNumber, Integer pageSize) {
 
-		return nominationRepository.findByEmployeeId(id, PageRequest.of(pageNumber, pageSize));
+		return nominationRepository.findByEmployeeId(id, new PageRequest(pageNumber, pageSize));
 
 	}
 
 	public Page<Nomination> getForDateRange(Date from, Date to, Integer pageNumber, Integer pageSize) {
-		return nominationRepository.findByDateBetween(from, to, PageRequest.of(pageNumber, pageSize));
+		return nominationRepository.findByDateBetween(from, to, new PageRequest(pageNumber, pageSize));
 
 	}
 

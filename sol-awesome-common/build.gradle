@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '2.0.3.RELEASE'
+       // springBootVersion = '2.0.3.RELEASE'
         mariaDbVersion = '1.5.9'
         springfoxSwaggerVersion = '2.8.0'
         lombockVersion = '1.18.0'
@@ -12,6 +12,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
+    	classpath("io.spring.gradle:dependency-management-plugin:1.0.5.RELEASE")
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
 }
@@ -30,18 +31,23 @@ repositories {
     maven { url "http://repo.spring.io/release"}
 }
 
-
+/*
 ext {
     springCloudVersion = 'Finchley.RELEASE'
 }
-
+*/
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa:' + springBootVersion)
     compile('org.springframework.boot:spring-boot-starter-data-rest:' + springBootVersion)
     compile('org.springframework.boot:spring-boot-starter-web:' + springBootVersion)
-    compile('org.springframework.cloud:spring-cloud-starter-sleuth')
-    compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
-	
+    compile('org.springframework.boot:spring-boot-starter-aop:' + springBootVersion)
+	compile('org.springframework.cloud:spring-cloud-starter-sleuth')
+    compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client') 
+	compile('org.springframework.cloud:spring-cloud-starter-feign') 
+	compile('io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry') {
+     	//exclude group: 'org.springframework.security', module: 'spring-security-config'
+  	} 
+   	
     compile('org.springframework.boot:spring-boot-starter-actuator:' + springBootVersion)
     compile('org.mariadb.jdbc:mariadb-java-client:'+ mariaDbVersion)
     compile('io.springfox:springfox-data-rest:' + springfoxSwaggerVersion)
@@ -59,5 +65,7 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        mavenBom "io.pivotal.spring.cloud:spring-cloud-services-dependencies:${springCloudServicesVersion}"
+       
     }
 }

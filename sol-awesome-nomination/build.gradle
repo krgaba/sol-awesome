@@ -1,14 +1,11 @@
 buildscript {
-	ext {
-		springBootVersion = '2.0.3.RELEASE'
-        mariaDbVersion='1.5.9'
-        springfoxSwaggerVersion='2.8.0'
-	}
+	
 	repositories {
 		mavenCentral()
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath("io.spring.gradle:dependency-management-plugin:1.0.5.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 	}
 }
 
@@ -20,42 +17,22 @@ apply plugin: 'io.spring.dependency-management'
 
 group = 'com.sol.awesome'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()
 }
 
 
-ext {
-	springCloudVersion = 'Finchley.RELEASE'
-}
-
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile('org.springframework.boot:spring-boot-starter-web')
-	compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
-	compile('org.hsqldb:hsqldb')
-	compileOnly('org.projectlombok:lombok')
-	
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-    compile('org.springframework.cloud:spring-cloud-starter-sleuth')
-    compile('org.springframework.boot:spring-boot-starter-actuator')
-    compile('org.springframework.cloud:spring-cloud-starter-feign:1.4.5.RELEASE')   
-   // compile('org.springframework.cloud:spring-cloud-starter-service-registry:1.4.5.RELEASE')
-    compile('org.mariadb.jdbc:mariadb-java-client:'+ mariaDbVersion)
-    compile('io.springfox:springfox-data-rest:2.8.0')
-    compile('io.springfox:springfox-swagger2:2.8.0')
-    compile('io.springfox:springfox-swagger-ui:2.8.0')
-    compile('org.apache.commons:commons-lang3:3.0')
-    compile('org.springframework.boot:spring-boot-starter-hateoas')
-    testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
-
+ 	compile(project(":sol-awesome-common")) {
+	}
 }
+
+
 
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+		mavenBom "io.pivotal.spring.cloud:spring-cloud-services-dependencies:${springCloudServicesVersion}"
 	}
 }

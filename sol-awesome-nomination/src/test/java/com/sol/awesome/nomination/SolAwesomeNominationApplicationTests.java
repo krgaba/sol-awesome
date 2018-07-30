@@ -143,6 +143,7 @@ public class SolAwesomeNominationApplicationTests {
 
 	}
 
+	//TODO: check logic on sunday
 	@Test
 	public void testGetNominationsByWeekWithNum() throws Exception {
 		Nomination nomination1 = nominationTemplate();
