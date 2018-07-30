@@ -121,19 +121,7 @@ public class SolAwesomeNominationApplicationTests {
 				.andExpect(jsonPath("$.content[0].employee.firstName", equalTo("John")));
 
 	}
-
-//	@Test
-//	@Sql("classpath:create.sql")
-//	public void testGetNominationsByDateRange2() throws Exception {
-//		String fromDateStr = LocalDateTime.now().plusDays(-1).format(DateTimeFormatter.ISO_LOCAL_DATE);
-//		String toDateStr = LocalDateTime.now().plusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE);
-//
-//		mvc.perform(get(nominationPath + "/period/from/" + fromDateStr + "/to/" + toDateStr)
-//				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(200))
-//				.andExpect(jsonPath("$.content", hasSize(2)))
-//				.andExpect(jsonPath("$.content[0].employee.firstName", equalTo("Khurum")));
-//
-//	}
+	
 
 	@Test
 	public void testGetNominationsByOutOfDateRange() throws Exception {
