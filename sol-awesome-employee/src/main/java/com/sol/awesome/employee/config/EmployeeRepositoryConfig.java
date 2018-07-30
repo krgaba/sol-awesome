@@ -25,8 +25,8 @@ import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguratio
 @Configuration
 public class EmployeeRepositoryConfig extends RepositoryRestMvcConfiguration {
 
-    public EmployeeRepositoryConfig(ApplicationContext context, ObjectFactory<ConversionService> conversionService) {
-        super(context, conversionService);
+    public EmployeeRepositoryConfig() {
+        super();
     }
 
     @Bean

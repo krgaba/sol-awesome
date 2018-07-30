@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '2.0.3.RELEASE'
+       // springBootVersion = '2.0.3.RELEASE'
         mariaDbVersion = '1.5.9'
         springfoxSwaggerVersion = '2.8.0'
         lombockVersion = '1.18.0'
@@ -31,11 +31,11 @@ repositories {
     maven { url "http://repo.spring.io/release"}
 }
 
-
+/*
 ext {
     springCloudVersion = 'Finchley.RELEASE'
 }
-
+*/
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa:' + springBootVersion)
     compile('org.springframework.boot:spring-boot-starter-data-rest:' + springBootVersion)
@@ -43,9 +43,9 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-aop:' + springBootVersion)
 	compile('org.springframework.cloud:spring-cloud-starter-sleuth')
     compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client') 
-	compile('org.springframework.cloud:spring-cloud-starter-feign:1.4.5.RELEASE') 
+	compile('org.springframework.cloud:spring-cloud-starter-feign') 
 	compile('io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry') {
-     	exclude group: 'org.springframework.security', module: 'spring-security-config'
+     	//exclude group: 'org.springframework.security', module: 'spring-security-config'
   	} 
    	
     compile('org.springframework.boot:spring-boot-starter-actuator:' + springBootVersion)
